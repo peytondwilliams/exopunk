@@ -1,0 +1,58 @@
+extends Node3D
+
+const HEX = preload("res://Objects/hex.tscn")
+
+const DIRECTION_ARR = [
+					Vector3i(+1, 0, -1), #mid right
+					Vector3i(+1, -1, 0), #top right
+					Vector3i(0, -1, +1), #top left
+					Vector3i(-1, 0, +1), #mid left
+					Vector3i(-1, +1, 0), #bot left
+					Vector3i(0, +1, -1) #bot right
+					]
+
+var grid : Dictionary = {}
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	generate_map()
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	pass
+
+func generate_hex_key(coords: Vector3i):
+	return str(coords.x) + str(coords.y) + str(coords.z)
+
+	
+func cube_to_real_coords(coords: Vector3i):
+	var q = float(coords.x)
+	var r = float(coords.y)
+	var s = float(coords.z)
+
+	var x = -sqrt(3) * ( r/2 + s )
+	var z = r * 1.5
+	return Vector3(x, 0, z)
+
+func generate_map():
+	
+	var curr_coords : Vector3i = Vector3i.ZERO
+	
+	for i in range(10):
+		for j in range(10):
+			var hex = HEX.instantiate()
+			$Hexes.add_child(hex)
+
+			hex.coords = curr_coords
+			hex.position = 1.05 * cube_to_real_coords(curr_coords)
+			print(curr_coords)
+			print(hex.position)
+			grid[generate_hex_key(curr_coords)] = hex
+			
+			curr_coords += DIRECTION_ARR[0]
+		curr_coords += (DIRECTION_ARR[3] * 10)
+		curr_coords += DIRECTION_ARR[5]
+		if (i % 2 == 1):
+			curr_coords += DIRECTION_ARR[3]
+		

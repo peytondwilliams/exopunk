@@ -1,0 +1,31 @@
+[gd_scene load_steps=6 format=3 uid="uid://d0bhwpc0vd54"]
+
+[ext_resource type="PackedScene" uid="uid://qonnji46c07t" path="res://Objects/hex_grid.tscn" id="1_vsb54"]
+[ext_resource type="PackedScene" uid="uid://bmx5nv4qro2g2" path="res://Player/player.tscn" id="2_m61nt"]
+
+[sub_resource type="Sky" id="Sky_mqmdf"]
+
+[sub_resource type="Environment" id="Environment_jg1ey"]
+sky = SubResource("Sky_mqmdf")
+ambient_light_source = 3
+ambient_light_color = Color(0.972549, 0.937255, 0.988235, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7hcgq"]
+
+[node name="Test" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_jg1ey")
+
+[node name="HexGrid" parent="." instance=ExtResource("1_vsb54")]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.990762, -0.135612, 0, 0.135612, 0.990762, 0, 1.10467, -1.91957)
+mesh = SubResource("PlaneMesh_7hcgq")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.322709, -0.794948, 0.513729, 0.698827, 0.16595, 0.695774, -0.638357, 0.58354, 0.501978, -8.2479, 19.7913, 2.21094)
+light_energy = 5.267
+directional_shadow_max_distance = 1105.5
+
+[node name="Player" parent="." instance=ExtResource("2_m61nt")]
