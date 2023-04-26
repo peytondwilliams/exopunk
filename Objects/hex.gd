@@ -1,5 +1,7 @@
 extends Node3D
 
+signal mouse_over
+
 var DIRECTION_ARR = [
 					Vector3i(+1, 0, -1), #mid right
 					Vector3i(+1, -1, 0), #top right

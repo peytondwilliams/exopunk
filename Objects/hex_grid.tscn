@@ -1,8 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://qonnji46c07t"]
+[gd_scene load_steps=3 format=3 uid="uid://qonnji46c07t"]
 
 [ext_resource type="Script" path="res://Objects/hex_grid.gd" id="1_02i85"]
+[ext_resource type="PackedScene" uid="uid://ckcfw6pq01ig5" path="res://Objects/pawn.tscn" id="2_clv1i"]
 
 [node name="HexGrid" type="Node3D"]
 script = ExtResource("1_02i85")
 
+[node name="Pawn" parent="." instance=ExtResource("2_clv1i")]
+
 [node name="Hexes" type="Node3D" parent="."]
+
+[node name="Units" type="Node3D" parent="."]

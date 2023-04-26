@@ -1,6 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://d0bhwpc0vd54"]
+[gd_scene load_steps=9 format=3 uid="uid://d0bhwpc0vd54"]
 
+[ext_resource type="Script" path="res://Levels/test.gd" id="1_nq1be"]
 [ext_resource type="PackedScene" uid="uid://qonnji46c07t" path="res://Objects/hex_grid.tscn" id="1_vsb54"]
+[ext_resource type="PackedScene" uid="uid://fx64kxxi8n1j" path="res://Objects/hex.tscn" id="2_2dmmt"]
 [ext_resource type="PackedScene" uid="uid://bmx5nv4qro2g2" path="res://Player/player.tscn" id="2_m61nt"]
 
 [sub_resource type="Sky" id="Sky_mqmdf"]
@@ -12,7 +14,11 @@ ambient_light_color = Color(0.972549, 0.937255, 0.988235, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_7hcgq"]
 
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_drvxu"]
+data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
+
 [node name="Test" type="Node3D"]
+script = ExtResource("1_nq1be")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_jg1ey")
@@ -23,9 +29,19 @@ environment = SubResource("Environment_jg1ey")
 transform = Transform3D(1, 0, 0, 0, 0.990762, -0.135612, 0, 0.135612, 0.990762, 0, 1.10467, -1.91957)
 mesh = SubResource("PlaneMesh_7hcgq")
 
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_drvxu")
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.322709, -0.794948, 0.513729, 0.698827, 0.16595, 0.695774, -0.638357, 0.58354, 0.501978, -8.2479, 19.7913, 2.21094)
 light_energy = 5.267
 directional_shadow_max_distance = 1105.5
 
+[node name="Hex" parent="." instance=ExtResource("2_2dmmt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.67929)
+
 [node name="Player" parent="." instance=ExtResource("2_m61nt")]
+
+[connection signal="select_hex" from="Player" to="HexGrid" method="_on_player_select_hex"]
