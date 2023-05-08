@@ -12,7 +12,6 @@ const DIRECTION_ARR = [
 					]
 
 var hex_grid : Dictionary = {}
-var unit_grid : Dictionary = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -37,7 +36,7 @@ func generate_map():
 
 			hex.coords = curr_coords
 			hex.position = 1.05 * cube_to_real_coords(curr_coords)
-			hex_grid[generate_hex_key(curr_coords)] = hex
+			hex_grid[generate_hex_key(curr_coords)] = {"hex": hex, "combat_units": [], "work_units": []}
 			
 			curr_coords += DIRECTION_ARR[0]
 		curr_coords += (DIRECTION_ARR[3] * 10)
@@ -46,9 +45,13 @@ func generate_map():
 			curr_coords += DIRECTION_ARR[3]
 		
 
+# hex board utility funcs
 func generate_hex_key(coords: Vector3i):
-	return str(coords.x) + str(coords.y) + str(coords.z)
+	return str(coords.x) + "," + str(coords.y) + "," + str(coords.z)
 
+func key_to_coords(coords_key: String):
+	var coords_split = coords_key.split(",")
+	return Vector3i(int(coords_split[0]), int(coords_split[1]), int(coords_split[2]))
 	
 func cube_to_real_coords(coords: Vector3i):
 	var q = float(coords.x)
@@ -83,8 +86,93 @@ func cube_round(coords: Vector3):
 	
 	return Vector3i(q, r, s)
 
-
+func cube_distance(a: Vector3i, b: Vector3i):
+	return (abs(a.x - b.x) + abs(a.y - b.y) + abs(a.z - b.z)) / 2
+# player actions
+@rpc("authority", "call_local")
+func move_unit(unit, coords: Vector3i):
+	var hex_dict = hex_grid[generate_hex_key(coords)]
+	var pawn = $Pawn
+	
+	hex_grid[generate_hex_key(pawn.coords)]["work_units"].pop_back()
+	hex_dict["work_units"].append(pawn)
+	
+	pawn.coords = coords
+	pawn.position = cube_to_real_coords(coords) * 1.05 + Vector3(0, 1, 0)
 
 func _on_player_select_hex(coords: Vector3i):
-	var pawn = $Pawn
-	pawn.position = cube_to_real_coords(coords) * 1.05 + Vector3(0, 1, 0)
+	var hex_dict = hex_grid[generate_hex_key(coords)]
+	if (hex_dict["work_units"].size() > 0):
+		pass
+		# select unit
+		#print("select unit")
+		
+	#print("moving unit")
+	_on_player_move_unit($Pawn, coords)
+	#rpc("move_unit", "", coords)
+	#move_unit("", coords)
+	
+func _on_player_move_unit(unit, coords: Vector3i):
+	if move_valid(unit, coords):
+		rpc("move_unit", unit, coords)
+		
+
+func move_valid(unit, coords: Vector3i):
+	var path = pathfinder(unit, coords)
+	
+	if path != null and path.size() <= unit.move_left:
+		unit.move_left -= path.size()
+		return true
+	
+	return false
+
+func pathfinder(unit, coords: Vector3i):
+	var unit_coords_key = generate_hex_key(unit.coords)
+	var target_coords_key =  generate_hex_key(coords)
+	
+	var pq = $PriQueue
+	pq.Enqueue(unit_coords_key, 0)
+	var came_from = Dictionary()
+	var total_cost = Dictionary()
+	came_from[unit_coords_key] = null
+	total_cost[unit_coords_key] = 0
+	
+	while pq.Size() > 0:
+		var current_key = pq.Dequeue()
+		
+		if current_key == target_coords_key:
+			var curr_key = target_coords_key
+			var path = []
+			
+			while curr_key != unit_coords_key:
+				path.push_front(curr_key)
+				curr_key = came_from[curr_key]
+				
+			pq.Clear()	
+			return path
+			
+		for neighbor in neighbors(current_key):
+			var new_cost = total_cost[current_key] + 1 # find cost of neighbor tile
+			if  (not neighbor in total_cost) or (new_cost < total_cost[neighbor]):
+				total_cost[neighbor] = new_cost
+				var prio = new_cost + dist_heuristic(target_coords_key, neighbor)
+				pq.Enqueue(neighbor, prio)
+				came_from[neighbor] = current_key
+				
+	pq.Clear()	
+	return null
+	
+func neighbors(coords_key: String):
+	var base_coords = key_to_coords(coords_key)
+	var found_neighbors = []
+	for offset in DIRECTION_ARR:
+		var new_coords_key = generate_hex_key(base_coords + offset)
+		var neighbor_hex = hex_grid.get(new_coords_key)
+		if (neighbor_hex != null):
+			# add check if terrain impassible
+			found_neighbors.append(new_coords_key)
+			
+	return found_neighbors
+		
+func dist_heuristic(goal: String, current: String):
+	return cube_distance(key_to_coords(goal), key_to_coords(current))

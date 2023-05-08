@@ -5,10 +5,10 @@
 [ext_resource type="PackedScene" uid="uid://fx64kxxi8n1j" path="res://Objects/hex.tscn" id="2_2dmmt"]
 [ext_resource type="PackedScene" uid="uid://bmx5nv4qro2g2" path="res://Player/player.tscn" id="2_m61nt"]
 
-[sub_resource type="Sky" id="Sky_mqmdf"]
+[sub_resource type="Sky" id="Sky_8bpox"]
 
 [sub_resource type="Environment" id="Environment_jg1ey"]
-sky = SubResource("Sky_mqmdf")
+sky = SubResource("Sky_8bpox")
 ambient_light_source = 3
 ambient_light_color = Color(0.972549, 0.937255, 0.988235, 1)
 

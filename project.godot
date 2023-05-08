@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="Exopunk"
-run/main_scene="res://Levels/test.tscn"
-config/features=PackedStringArray("4.0", "Forward Plus")
+run/main_scene="res://Levels/multiplayer.tscn"
+config/features=PackedStringArray("4.0", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [display]
@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 window/size/viewport_width=1920
 window/size/viewport_height=1080
 window/stretch/mode="viewport"
+
+[dotnet]
+
+project/assembly_name="Exopunk"
 
 [editor]
 

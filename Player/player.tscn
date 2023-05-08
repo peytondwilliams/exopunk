@@ -1,9 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://bmx5nv4qro2g2"]
+[gd_scene load_steps=3 format=3 uid="uid://bmx5nv4qro2g2"]
 
 [ext_resource type="Script" path="res://Player/player.gd" id="1_3462k"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_niurc"]
+properties/0/path = NodePath(".:player")
+properties/0/spawn = true
+properties/0/sync = false
 
 [node name="Player" type="Node3D"]
 script = ExtResource("1_3462k")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 10, 0)
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_niurc")

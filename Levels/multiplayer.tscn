@@ -1,0 +1,51 @@
+[gd_scene load_steps=6 format=3 uid="uid://d1nw5ukkj7p7n"]
+
+[ext_resource type="Script" path="res://Levels/multiplayer.gd" id="1_tgyif"]
+[ext_resource type="PackedScene" uid="uid://qonnji46c07t" path="res://Objects/hex_grid.tscn" id="2_lv42c"]
+[ext_resource type="Script" path="res://Levels/Level.gd" id="3_8ivah"]
+
+[sub_resource type="Sky" id="Sky_mqmdf"]
+
+[sub_resource type="Environment" id="Environment_r5dq6"]
+sky = SubResource("Sky_mqmdf")
+ambient_light_source = 3
+ambient_light_color = Color(0.972549, 0.937255, 0.988235, 1)
+
+[node name="Multiplayer" type="Node"]
+script = ExtResource("1_tgyif")
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Host" type="Button" parent="UI"]
+layout_mode = 0
+offset_right = 329.0
+offset_bottom = 138.0
+text = "Host"
+
+[node name="Join" type="Button" parent="UI"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 142.0
+offset_right = 328.0
+offset_bottom = 283.0
+text = "Join"
+
+[node name="Level" type="Node3D" parent="."]
+script = ExtResource("3_8ivah")
+
+[node name="HexGrid" parent="Level" instance=ExtResource("2_lv42c")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Level"]
+environment = SubResource("Environment_r5dq6")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Level"]
+transform = Transform3D(-0.322709, -0.794948, 0.513729, 0.698827, 0.16595, 0.695774, -0.638357, 0.58354, 0.501978, -8.2479, 19.7913, 2.21094)
+light_energy = 5.267
+directional_shadow_max_distance = 1105.5
+
+[connection signal="pressed" from="UI/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="UI/Join" to="." method="_on_join_pressed"]

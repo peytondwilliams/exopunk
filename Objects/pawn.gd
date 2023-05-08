@@ -1,7 +1,6 @@
 extends Node3D
 
-signal mouse_over
-
+# constants
 const DIRECTION_ARR = [
 					Vector3i(+1, 0, -1), #mid right
 					Vector3i(+1, -1, 0), #top right
@@ -11,28 +10,20 @@ const DIRECTION_ARR = [
 					Vector3i(0, +1, -1) #bot right
 					]
 
-const RESOURCES = {
-	"uranium": {},
-	"gold": {},
-	"titanium": {}
-}
+# unit stats
+@export var move_stat : int = 2
+@export var attack_stat : int = 10
+@export var gather_stat : int = 20
+@export var health_stat : int = 100
 
-const BIOMES = {
-	"ocean": {},
-	"barren": {},
-	"mountain": {},
-}
 
-#const FEATURES = {
-#	"mountain": {},
-#	"hill": {},
-#	"flatland": {},
-#}
-
+# unit variables
 var coords : Vector3i
-var resource = "none"
-var biome = "none"
-#var feature = "none"
+
+var move_left: int = move_stat
+var health : int = health_stat
+var leader: int = 0
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -42,3 +33,8 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
+
+
+func new_turn():
+	move_left = move_stat
+	

@@ -10,6 +10,13 @@ var prev_mouse_pos = Vector3.ZERO
 
 var raycast_result : Dictionary = {}
 
+@export var player := 1 :
+	set(id):
+		player = id
+		print("set id", id)
+		# Give authority over the player input to the appropriate peer.
+		#set_multiplayer_authority(id)
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -38,11 +45,23 @@ func _input(event):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+
+		
 	if Input.is_action_just_pressed("action_leftclick"):
+		
+		#if player != multiplayer.get_unique_id():
+		#	print("Invalid player", player)
+		#	print("unique id", multiplayer.get_unique_id())
+		#	return
+		
 		if "collider" in raycast_result:
 			var hex_coords: Vector3i = raycast_result.collider.get_parent().coords
-			select_hex.emit(hex_coords)
-			
+			#select_hex.emit(hex_coords)
+			#if (player == 1):
+			#	click(hex_coords)
+			#else:
+			print("player", player)
+			click.rpc_id(1, hex_coords)
 
 func _physics_process(delta):
 	var mouse_pos = get_viewport().get_mouse_position()
@@ -55,3 +74,12 @@ func _physics_process(delta):
 	ray_query.to = to
 	ray_query.collision_mask = COLLISION_MASK
 	raycast_result = space.intersect_ray(ray_query)
+	
+@rpc("any_peer", "call_local")
+func click(coords):
+	#var peer_id = multiplayer.get_remote_sender_id()
+	#if peer_id = get_multiplayer_authority():
+	#print(coords)
+	#print(multiplayer.get_remote_sender_id())
+	select_hex.emit(coords)
+	pass
